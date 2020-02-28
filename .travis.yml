@@ -18,6 +18,8 @@ script:
   - travis_retry mvn clean package
 
 after_success:
+  - cd target
+  - java -jar locksbenchmark.jar
   - mvn clean
 
 notifications:
