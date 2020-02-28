@@ -19,7 +19,7 @@ script:
 
 after_success:
   - cd target
-  - java -jar locksbenchmark.jar
+  - java -jar locksbenchmark-1.0.jar
   - mvn clean
 
 notifications:
