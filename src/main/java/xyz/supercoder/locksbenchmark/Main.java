@@ -10,7 +10,8 @@ import java.util.stream.Collectors;
 public class Main {
 	public static void main(String[] args) {
         System.out.println(String.format(
-                "Arch: %s, Vendor: %s, JRE version: %s",
+                "CPUs: %d, Arch: %s, Vendor: %s, JRE version: %s",
+                Runtime.getRuntime().availableProcessors(),
                 System.getProperty("os.arch"),
                 System.getProperty("java.vendor"),
                 System.getProperty("java.version")));
