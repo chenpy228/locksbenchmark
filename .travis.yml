@@ -12,7 +12,7 @@ matrix:
 
 before_install:
   - env
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then jdk_switcher use "$CUSTOM_JDK"; fi`
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then jdk_switcher use "$CUSTOM_JDK"; fi
 
 script:
   - travis_retry mvn clean package
