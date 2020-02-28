@@ -6,33 +6,31 @@ import java.util.concurrent.CyclicBarrier;
 
 public class Writer implements Runnable {
 
-	private final Counter counter;
+    private final Counter counter;
 
-	private final CyclicBarrier startWorkBarrier;
+    private final CyclicBarrier startWorkBarrier;
 
-	private final CountDownLatch stopWorkLatch;
+    private final CountDownLatch stopWorkLatch;
 
-	public Writer(Counter counter,
-				  CyclicBarrier startWorkBarrier,
-				  CountDownLatch stopWorkLatch) {
-		this.counter = counter;
-		this.startWorkBarrier = startWorkBarrier;
-		this.stopWorkLatch = stopWorkLatch;
-	}
-	
-	public void run() {
-		try {
-			startWorkBarrier.await();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (BrokenBarrierException e) {
-			e.printStackTrace();
-		}
+    Writer(Counter counter,
+           CyclicBarrier startWorkBarrier,
+           CountDownLatch stopWorkLatch) {
+        this.counter = counter;
+        this.startWorkBarrier = startWorkBarrier;
+        this.stopWorkLatch = stopWorkLatch;
+    }
 
-		while (!Thread.interrupted()) {
-			counter.increment();
-		}
+    public void run() {
+        try {
+            startWorkBarrier.await();
+        } catch (InterruptedException | BrokenBarrierException e) {
+            e.printStackTrace();
+        }
 
-		stopWorkLatch.countDown();
-	}
+        while (!Thread.interrupted()) {
+            counter.increment();
+        }
+
+        stopWorkLatch.countDown();
+    }
 }

@@ -8,7 +8,7 @@ import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public class Main {
-	public static void main(String[] args) {
+    public static void main(String[] args) {
         System.out.println(String.format(
                 "CPUs: %d, Arch: %s, Vendor: %s, JRE version: %s",
                 Runtime.getRuntime().availableProcessors(),
@@ -20,18 +20,18 @@ public class Main {
         System.out.println(strategy);
 
         Map<String, Long> resultMap = new HashMap<>();
-		for (Counter counter : Counter.values()) {
-		    resultMap.put(counter.name(), testCounter(counter, strategy));
-		}
+        for (Counter counter : Counter.values()) {
+            resultMap.put(counter.name(), testCounter(counter, strategy));
+        }
 
-		String result = resultMap.entrySet().stream()
+        String result = resultMap.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
                 .map(e -> String.format("%s(%d)", e.getKey(), e.getValue()))
                 .collect(Collectors.joining(" > "));
         System.out.println(result);
-	}
+    }
 
-	private static long testCounter(Counter counter, Strategy strategy) {
+    private static long testCounter(Counter counter, Strategy strategy) {
         System.out.println("Testing synchronization mechanism: " + counter.name());
 
         int rounds = strategy.getRounds();
