@@ -1,17 +1,17 @@
 package xyz.supercoder.locksbenchmark;
 
 public class Strategy {
-    public static long TARGET_VALUE = 1000000L;
-    public static int READER_THREADS = 1; // must bigger than 1
-    public static int WRITER_THREADS = 1; // must bigger than 1
-    public static int ROUNDS = 10;        // must bigger than 5
+    private static long TARGET_VALUE = 10000000L;
+    private static int READER_THREADS = 1; // must bigger than 1
+    private static int WRITER_THREADS = 1; // must bigger than 1
+    private static int ROUNDS = 10;        // must bigger than 5
 
     private long targetValue;
     private int readerThreads;
     private int writerThreads;
     private int rounds;
 
-    public Strategy() {
+    Strategy() {
         this.targetValue = TARGET_VALUE;
         this.readerThreads = READER_THREADS;
         this.writerThreads = WRITER_THREADS;
