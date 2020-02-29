@@ -18,7 +18,10 @@ script:
   - travis_retry mvn clean package
 
 after_success:
-  - java -jar target/locksbenchmark-1.0.jar
+  - java -jar target/locksbenchmark-1.0.jar -r 1 -w 1
+  - java -jar target/locksbenchmark-1.0.jar -r 1 -w 5
+  - java -jar target/locksbenchmark-1.0.jar -r 5 -w 1
+  - java -jar target/locksbenchmark-1.0.jar -r 5 -w 5
   - mvn clean
 
 notifications:
