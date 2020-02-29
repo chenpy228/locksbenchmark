@@ -2,8 +2,8 @@ package xyz.supercoder.locksbenchmark;
 
 public class Strategy {
     private static long TARGET_VALUE = 10000000L;
-    private static int READER_THREADS = 1; // must bigger than 1
-    private static int WRITER_THREADS = 1; // must bigger than 1
+    private static int READER_THREADS = 1; // must bigger than 0
+    private static int WRITER_THREADS = 1; // must bigger than 0
     private static int ROUNDS = 10;        // must bigger than 5
 
     private long targetValue;
@@ -23,6 +23,10 @@ public class Strategy {
     }
 
     public void setTargetValue(long targetValue) {
+        if (targetValue < 1) {
+            throw new IllegalArgumentException("The target value should be bigger than 0.");
+        }
+
         this.targetValue = targetValue;
     }
 
@@ -59,7 +63,7 @@ public class Strategy {
     }
 
     public void setRounds(int rounds) {
-        if (rounds < 5) {
+        if (rounds <= 5) {
             throw new IllegalArgumentException("The rounds MUST bigger than 5.");
         }
 
@@ -69,7 +73,7 @@ public class Strategy {
     @Override
     public String toString() {
         return String.format(
-                "Reader thread number: %d, writer thread number: %d, rounds: %d, target value: %d",
+                "Reader threads: %d, writer threads: %d, rounds: %d, target value: %d",
                 this.readerThreads,
                 this.writerThreads,
                 this.rounds,
