@@ -187,36 +187,6 @@ public enum Counter {
         }
     },
 
-    FairReentrantLock() {
-        private final ReentrantLock lock = new ReentrantLock(true);
-        private long value = 0;
-
-        @Override
-        public void reset() {
-            this.value = 0;
-        }
-
-        @Override
-        public long get() {
-            lock.lock();
-            try {
-                return this.value;
-            } finally {
-                lock.unlock();
-            }
-        }
-
-        @Override
-        public void increment() {
-            lock.lock();
-            try {
-                this.value++;
-            } finally {
-                lock.unlock();
-            }
-        }
-    },
-
     NonfairReentrantLock() {
         private final ReentrantLock lock = new ReentrantLock(false);
         private long value = 0;
