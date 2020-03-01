@@ -24,7 +24,7 @@ public class Strategy {
 
     public void setTargetValue(long targetValue) {
         if (targetValue < 1) {
-            throw new IllegalArgumentException("The target value should be bigger than 0.");
+            throw new IllegalArgumentException("The target value MUST bigger than 0.");
         }
 
         this.targetValue = targetValue;

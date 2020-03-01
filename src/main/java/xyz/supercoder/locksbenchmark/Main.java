@@ -41,16 +41,16 @@ public class Main {
     private static void parseStrategy(String[] args, Strategy strategy) {
         options.addOption(Option.builder("h").longOpt("help").build());
         options.addOption(Option.builder("r").longOpt("readers")
-                .desc("The number of reader threads, MUST bigger than 0.")
+                .desc("The number of reader threads, MUST bigger than 0, default is 1.")
                 .hasArg(true).type(Long.class).build());
         options.addOption(Option.builder("w").longOpt("writers")
-                .desc("The number of writer threads, MUST bigger than 0.")
+                .desc("The number of writer threads, MUST bigger than 0, default is 1.")
                 .hasArg(true).type(Long.class).build());
         options.addOption(Option.builder("R").longOpt("rounds")
-                .desc("The rounds of testing, MUST bigger than 5.")
+                .desc("The rounds of testing, MUST bigger than 5, default is 10.")
                 .hasArg(true).type(Long.class).build());
         options.addOption(Option.builder("t").longOpt("target")
-                .desc("The target value, should bigger than 0.")
+                .desc("The target value, MUST bigger than 0, default is 1000000.")
                 .hasArg(true).type(Long.class).build());
 
         try {
@@ -87,7 +87,7 @@ public class Main {
 
         HelpFormatter helpFormatter = new HelpFormatter();
         helpFormatter.printHelp(printWriter, HelpFormatter.DEFAULT_WIDTH,
-                "help", null,
+                "java -jar locksbenchmark-1.0.jar", null,
                 options, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, null);
 
         printWriter.flush();

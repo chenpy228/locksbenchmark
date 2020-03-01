@@ -25,6 +25,25 @@ public enum Counter {
         }
     },
 
+    Volatile() {
+        private volatile long value = 0;
+
+        @Override
+        public void reset() {
+            this.value = 0;
+        }
+
+        @Override
+        public long get() {
+            return this.value;
+        }
+
+        @Override
+        public void increment() {
+            this.value++;
+        }
+    },
+
     AtomicLong() {
         private final AtomicLong value = new AtomicLong(0);
 
@@ -244,25 +263,6 @@ public enum Counter {
             } finally {
                 lock.unlock();
             }
-        }
-    },
-
-    Volatile() {
-        private volatile long value = 0;
-
-        @Override
-        public void reset() {
-            this.value = 0;
-        }
-
-        @Override
-        public long get() {
-            return this.value;
-        }
-
-        @Override
-        public void increment() {
-            this.value++;
         }
     };
 
