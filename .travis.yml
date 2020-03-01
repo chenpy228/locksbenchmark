@@ -15,7 +15,8 @@ before_install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then jdk_switcher use "$CUSTOM_JDK"; fi
 
 script:
-  - travis_retry mvn clean package
+  - travis_retry mvn clean
+  - travis_retry mvn package jacoco:report coveralls:report
 
 after_success:
   - java -jar target/locksbenchmark-1.0.jar -r 1 -w 1
