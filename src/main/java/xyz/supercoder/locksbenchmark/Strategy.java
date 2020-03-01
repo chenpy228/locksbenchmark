@@ -1,7 +1,7 @@
 package xyz.supercoder.locksbenchmark;
 
 public class Strategy {
-    private static long TARGET_VALUE = 10000000L;
+    private static long TARGET_VALUE = 1000000L;
     private static int READER_THREADS = 1; // must bigger than 0
     private static int WRITER_THREADS = 1; // must bigger than 0
     private static int ROUNDS = 10;        // must bigger than 5
