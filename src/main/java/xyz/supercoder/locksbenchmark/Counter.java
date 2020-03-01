@@ -2,10 +2,7 @@ package xyz.supercoder.locksbenchmark;
 
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.concurrent.locks.StampedLock;
+import java.util.concurrent.locks.*;
 
 public enum Counter {
 
@@ -81,7 +78,7 @@ public enum Counter {
             try {
                 return this.value;
             } finally {
-                stampedLock.unlock(stamp);
+                stampedLock.unlockRead(stamp);
             }
         }
 
@@ -91,7 +88,43 @@ public enum Counter {
             try {
                 this.value++;
             } finally {
-                stampedLock.unlock(stamp);
+                stampedLock.unlockWrite(stamp);
+            }
+        }
+    },
+
+    OptimisticStampedLock() {
+        private final StampedLock stampedLock = new StampedLock();
+        private long value = 0;
+
+        @Override
+        public void reset() {
+            this.value = 0;
+        }
+
+        @Override
+        public long get() {
+            long stamp = stampedLock.tryOptimisticRead();
+            long result = this.value;
+            if (!stampedLock.validate(stamp)) {
+                stamp = stampedLock.readLock();
+                try {
+                    result = this.value;
+                } finally {
+                    stampedLock.unlockRead(stamp);
+                }
+            }
+
+            return result;
+        }
+
+        @Override
+        public void increment() {
+            long stamp = stampedLock.writeLock();
+            try {
+                this.value++;
+            } finally {
+                stampedLock.unlockWrite(stamp);
             }
         }
     },
@@ -154,6 +187,66 @@ public enum Counter {
         }
     },
 
+    FairReentrantLock() {
+        private final ReentrantLock lock = new ReentrantLock(true);
+        private long value = 0;
+
+        @Override
+        public void reset() {
+            this.value = 0;
+        }
+
+        @Override
+        public long get() {
+            lock.lock();
+            try {
+                return this.value;
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        @Override
+        public void increment() {
+            lock.lock();
+            try {
+                this.value++;
+            } finally {
+                lock.unlock();
+            }
+        }
+    },
+
+    NonfairReentrantLock() {
+        private final ReentrantLock lock = new ReentrantLock(false);
+        private long value = 0;
+
+        @Override
+        public void reset() {
+            this.value = 0;
+        }
+
+        @Override
+        public long get() {
+            lock.lock();
+            try {
+                return this.value;
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        @Override
+        public void increment() {
+            lock.lock();
+            try {
+                this.value++;
+            } finally {
+                lock.unlock();
+            }
+        }
+    },
+
     Volatile() {
         private volatile long value = 0;
 
@@ -173,7 +266,7 @@ public enum Counter {
         }
     };
 
-    public abstract void reset();
+    public abstract void reset();  // maybe not thread safe
     public abstract long get();
     public abstract void increment();
 }
