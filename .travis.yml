@@ -22,12 +22,15 @@ after_success:
   - java -jar target/locksbenchmark-1.0.jar -r 1 -w 5
   - java -jar target/locksbenchmark-1.0.jar -r 5 -w 1
   - java -jar target/locksbenchmark-1.0.jar -r 5 -w 5
+  - java -jar target/locksbenchmark-1.0.jar -r 1 -w 20
+  - java -jar target/locksbenchmark-1.0.jar -r 20 -w 1
+  - java -jar target/locksbenchmark-1.0.jar -r 20 -w 20
   - mvn clean
 
 notifications:
   email:
     recipients:
       - chpei@foxmail.com
-  on_success: always
+  on_success: change
   on_failure: always
 
