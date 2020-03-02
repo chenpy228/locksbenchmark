@@ -12,11 +12,8 @@ public class ProgressBar {
         // back to the head of line
         reset();
 
-        draw(percentage);
-
-        // clear progress info when task completed
-        if (percentage == 100) {
-            reset();
+        if (percentage != 100) {
+            draw(percentage);
         }
     }
 
