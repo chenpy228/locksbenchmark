@@ -37,17 +37,17 @@ public class Strategy {
         readerThreadsDesc = makeDesc("The number of reader threads",
                 MIN_READER_THREADS, MAX_READER_THREADS, DEFAULT_READER_THREADS);
         options.addOption(Option.builder("r").longOpt("readers").desc(readerThreadsDesc)
-                .hasArg(true).type(Long.class).build());
+                .hasArg(true).type(Integer.class).build());
 
         writerThreadsDesc = makeDesc("The number of writer threads",
                 MIN_WRITER_THREADS, MAX_WRITER_THREADS, DEFAULT_WRITER_THREADS);
         options.addOption(Option.builder("w").longOpt("writers").desc(writerThreadsDesc)
-                .hasArg(true).type(Long.class).build());
+                .hasArg(true).type(Integer.class).build());
 
         roundsDesc = makeDesc("The rounds of testing",
                 MIN_ROUNDS, MAX_ROUNDS, DEFAULT_ROUNDS);
         options.addOption(Option.builder("R").longOpt("rounds").desc(roundsDesc)
-                .hasArg(true).type(Long.class).build());
+                .hasArg(true).type(Integer.class).build());
 
         targetValueDesc = makeDesc("The target value",
                 MIN_TARGET_VALUE, MAX_TARGET_VALUE, DEFAULT_TARGET_VALUE);
