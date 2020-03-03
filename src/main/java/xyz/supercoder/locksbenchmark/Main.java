@@ -1,9 +1,5 @@
 package xyz.supercoder.locksbenchmark;
 
-import org.apache.commons.cli.*;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -12,11 +8,9 @@ import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 public class Main {
-    private static Options options = new Options();
 
     public static void main(String[] args) {
-        Strategy strategy = new Strategy();
-        parseStrategy(args, strategy);
+        Strategy strategy = Strategy.parseStrategy(args);
         System.out.println(strategy);
 
         System.out.println(String.format(
@@ -36,65 +30,6 @@ public class Main {
                 .map(e -> String.format("%s(%d)", e.getKey(), e.getValue()))
                 .collect(Collectors.joining(" > "));
         System.out.println(result);
-    }
-
-    private static void parseStrategy(String[] args, Strategy strategy) {
-        options.addOption(Option.builder("h").longOpt("help").build());
-        options.addOption(Option.builder("r").longOpt("readers")
-                .desc("The number of reader threads, MUST bigger than 0, default is 1.")
-                .hasArg(true).type(Long.class).build());
-        options.addOption(Option.builder("w").longOpt("writers")
-                .desc("The number of writer threads, MUST bigger than 0, default is 1.")
-                .hasArg(true).type(Long.class).build());
-        options.addOption(Option.builder("R").longOpt("rounds")
-                .desc("The rounds of testing, MUST bigger than 5, default is 10.")
-                .hasArg(true).type(Long.class).build());
-        options.addOption(Option.builder("t").longOpt("target")
-                .desc("The target value, MUST bigger than 0, default is 1000000.")
-                .hasArg(true).type(Long.class).build());
-
-        try {
-            CommandLine commandLine = new DefaultParser().parse(options, args);
-            if (commandLine.hasOption("h")) {
-                System.out.println(getHelpString());
-                System.exit(0);
-            }
-
-            if (commandLine.hasOption("r")) {
-                strategy.setReaderThreads(Integer.parseInt(commandLine.getOptionValue("r")));
-            }
-
-            if (commandLine.hasOption("w")) {
-                strategy.setWriterThreads(Integer.parseInt(commandLine.getOptionValue("w")));
-            }
-
-            if (commandLine.hasOption("R")) {
-                strategy.setRounds(Integer.parseInt(commandLine.getOptionValue("R")));
-            }
-
-            if (commandLine.hasOption("t")) {
-                strategy.setTargetValue(Long.parseLong(commandLine.getOptionValue("t")));
-            }
-        } catch (ParseException e) {
-            System.out.println(getHelpString());
-            System.exit(1);
-        }
-    }
-
-    private static String getHelpString() {
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        PrintWriter printWriter = new PrintWriter(byteArrayOutputStream);
-
-        HelpFormatter helpFormatter = new HelpFormatter();
-        helpFormatter.printHelp(printWriter, HelpFormatter.DEFAULT_WIDTH,
-                "java -jar locksbenchmark-1.0.jar", null,
-                options, HelpFormatter.DEFAULT_LEFT_PAD, HelpFormatter.DEFAULT_DESC_PAD, null);
-
-        printWriter.flush();
-        String helpString = new String(byteArrayOutputStream.toByteArray());
-        printWriter.close();
-
-        return helpString;
     }
 
     private static long testCounter(Counter counter, Strategy strategy) {

@@ -8,39 +8,38 @@ public class Reader implements Runnable {
 
     private final Counter counter;
 
-    private final long maxValue;
+    private final long targetValue;
 
-    private final CyclicBarrier startWorkBarrier;
+    private final CyclicBarrier startWorkingBarrier;
 
-    private final CountDownLatch stopWorkLatch;
+    private final CountDownLatch stopWorkingLatch;
 
     Reader(Counter counter,
-           CyclicBarrier startWorkBarrier,
-           CountDownLatch stopWorkLatch,
-           long maxValue) {
+           CyclicBarrier startWorkingBarrier,
+           CountDownLatch stopWorkingLatch,
+           long targetValue) {
         this.counter = counter;
-        this.maxValue = maxValue;
+        this.targetValue = targetValue;
 
-        this.startWorkBarrier = startWorkBarrier;
-        this.stopWorkLatch = stopWorkLatch;
+        this.startWorkingBarrier = startWorkingBarrier;
+        this.stopWorkingLatch = stopWorkingLatch;
     }
 
     @Override
-    public void run()
-    {
+    public void run() {
         try {
-            startWorkBarrier.await();
+            startWorkingBarrier.await();
         } catch (InterruptedException | BrokenBarrierException e) {
             e.printStackTrace();
         }
 
         while (!Thread.interrupted()) {
             long value = counter.get();
-            if (value> maxValue) {
+            if (value > targetValue) {
                 break;
             }
         }
 
-        stopWorkLatch.countDown();
+        stopWorkingLatch.countDown();
     }
 }

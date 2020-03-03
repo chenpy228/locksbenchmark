@@ -1,30 +1,117 @@
 package xyz.supercoder.locksbenchmark;
 
+import org.apache.commons.cli.*;
+
 public class Strategy {
-    private static long TARGET_VALUE = 1000000L;
-    private static int READER_THREADS = 1; // must bigger than 0
-    private static int WRITER_THREADS = 1; // must bigger than 0
-    private static int ROUNDS = 10;        // must bigger than 5
+    private static final long MIN_TARGET_VALUE = 10000L;
+    private static final long MAX_TARGET_VALUE = 100000000000000L;
+    private static final long DEFAULT_TARGET_VALUE = 1000000L;
+
+    private static final int MIN_READER_THREADS = 1;
+    private static final int MAX_READER_THREADS = 1000000;
+    private static final int DEFAULT_READER_THREADS = 1;
+
+    private static final int MIN_WRITER_THREADS = 1;
+    private static final int MAX_WRITER_THREADS = 1000000;
+    private static final int DEFAULT_WRITER_THREADS = 1;
+
+    private static final int MIN_ROUNDS = 5;
+    private static final int MAX_ROUNDS = 1000000;
+    private static final int DEFAULT_ROUNDS = 5;
+
+    private static String targetValueDesc;
+    private static String readerThreadsDesc;
+    private static String writerThreadsDesc;
+    private static String roundsDesc;
 
     private long targetValue;
     private int readerThreads;
     private int writerThreads;
     private int rounds;
 
-    Strategy() {
-        this.targetValue = TARGET_VALUE;
-        this.readerThreads = READER_THREADS;
-        this.writerThreads = WRITER_THREADS;
-        this.rounds = ROUNDS;
+    private static Options options = new Options();
+
+    static {
+        options.addOption(Option.builder("h").longOpt("help").build());
+
+        readerThreadsDesc = makeDesc("The number of reader threads",
+                MIN_READER_THREADS, MAX_READER_THREADS, DEFAULT_READER_THREADS);
+        options.addOption(Option.builder("r").longOpt("readers").desc(readerThreadsDesc)
+                .hasArg(true).type(Long.class).build());
+
+        writerThreadsDesc = makeDesc("The number of writer threads",
+                MIN_WRITER_THREADS, MAX_WRITER_THREADS, DEFAULT_WRITER_THREADS);
+        options.addOption(Option.builder("w").longOpt("writers").desc(writerThreadsDesc)
+                .hasArg(true).type(Long.class).build());
+
+        roundsDesc = makeDesc("The rounds of testing",
+                MIN_ROUNDS, MAX_ROUNDS, DEFAULT_ROUNDS);
+        options.addOption(Option.builder("R").longOpt("rounds").desc(roundsDesc)
+                .hasArg(true).type(Long.class).build());
+
+        targetValueDesc = makeDesc("The target value",
+                MIN_TARGET_VALUE, MAX_TARGET_VALUE, DEFAULT_TARGET_VALUE);
+        options.addOption(Option.builder("t").longOpt("target").desc(targetValueDesc)
+                .hasArg(true).type(Long.class).build());
+    }
+
+    private static String makeDesc(String shortDesc, long minValue, long maxValue, long defaultValue) {
+        return String.format("%s, MUST between [%d, %d], default is %d.",
+                shortDesc, minValue, maxValue, defaultValue);
+    }
+
+    private Strategy() {
+        this.targetValue = DEFAULT_TARGET_VALUE;
+        this.readerThreads = DEFAULT_READER_THREADS;
+        this.writerThreads = DEFAULT_WRITER_THREADS;
+        this.rounds = DEFAULT_ROUNDS;
+    }
+
+    public static Strategy parseStrategy(String[] args) {
+        Strategy strategy = new Strategy();
+        try {
+            CommandLine commandLine = new DefaultParser().parse(options, args);
+            if (commandLine.hasOption("h")) {
+                printHelpString();
+                System.exit(0);
+            }
+
+            if (commandLine.hasOption("r")) {
+                strategy.setReaderThreads(Integer.parseInt(commandLine.getOptionValue("r")));
+            }
+
+            if (commandLine.hasOption("w")) {
+                strategy.setWriterThreads(Integer.parseInt(commandLine.getOptionValue("w")));
+            }
+
+            if (commandLine.hasOption("R")) {
+                strategy.setRounds(Integer.parseInt(commandLine.getOptionValue("R")));
+            }
+
+            if (commandLine.hasOption("t")) {
+                strategy.setTargetValue(Long.parseLong(commandLine.getOptionValue("t")));
+            }
+        } catch (ParseException | IllegalArgumentException e) {
+            e.printStackTrace();
+            printHelpString();
+            System.exit(1);
+        }
+
+        return strategy;
+    }
+
+    private static void  printHelpString() {
+        HelpFormatter helpFormatter = new HelpFormatter();
+        helpFormatter.printHelp("java -jar locksbenchmark-1.0.jar", options);
     }
 
     public long getTargetValue() {
         return targetValue;
     }
 
-    public void setTargetValue(long targetValue) {
-        if (targetValue < 1) {
-            throw new IllegalArgumentException("The target value MUST bigger than 0.");
+    private void setTargetValue(long targetValue) {
+        if ((targetValue < MIN_TARGET_VALUE) || (targetValue > MAX_TARGET_VALUE)) {
+            throw new IllegalArgumentException(targetValueDesc);
         }
 
         this.targetValue = targetValue;
@@ -34,9 +121,9 @@ public class Strategy {
         return readerThreads;
     }
 
-    public void setReaderThreads(int readerThreads) {
-        if (readerThreads < 1) {
-            throw new IllegalArgumentException("The reader threads MUST bigger than 1.");
+    private void setReaderThreads(int readerThreads) {
+        if ((readerThreads < MIN_READER_THREADS) || (readerThreads > MAX_READER_THREADS)) {
+            throw new IllegalArgumentException(readerThreadsDesc);
         }
 
         this.readerThreads = readerThreads;
@@ -46,9 +133,9 @@ public class Strategy {
         return writerThreads;
     }
 
-    public void setWriterThreads(int writerThreads) {
-        if (writerThreads < 1) {
-            throw new IllegalArgumentException("The writer threads MUST bigger than 1.");
+    private void setWriterThreads(int writerThreads) {
+        if ((writerThreads < MIN_WRITER_THREADS) || (writerThreads > MAX_WRITER_THREADS)) {
+            throw new IllegalArgumentException(writerThreadsDesc);
         }
 
         this.writerThreads = writerThreads;
@@ -62,9 +149,9 @@ public class Strategy {
         return rounds;
     }
 
-    public void setRounds(int rounds) {
-        if (rounds <= 5) {
-            throw new IllegalArgumentException("The rounds MUST bigger than 5.");
+    private void setRounds(int rounds) {
+        if ((rounds < MIN_ROUNDS) || (rounds > MAX_ROUNDS)) {
+            throw new IllegalArgumentException(roundsDesc);
         }
 
         this.rounds = rounds;

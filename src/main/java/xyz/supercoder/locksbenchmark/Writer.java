@@ -8,21 +8,22 @@ public class Writer implements Runnable {
 
     private final Counter counter;
 
-    private final CyclicBarrier startWorkBarrier;
+    private final CyclicBarrier startWorkingBarrier;
 
-    private final CountDownLatch stopWorkLatch;
+    private final CountDownLatch stopWorkingLatch;
 
     Writer(Counter counter,
-           CyclicBarrier startWorkBarrier,
-           CountDownLatch stopWorkLatch) {
+           CyclicBarrier startWorkingBarrier,
+           CountDownLatch stopWorkingLatch) {
         this.counter = counter;
-        this.startWorkBarrier = startWorkBarrier;
-        this.stopWorkLatch = stopWorkLatch;
+
+        this.startWorkingBarrier = startWorkingBarrier;
+        this.stopWorkingLatch = stopWorkingLatch;
     }
 
     public void run() {
         try {
-            startWorkBarrier.await();
+            startWorkingBarrier.await();
         } catch (InterruptedException | BrokenBarrierException e) {
             e.printStackTrace();
         }
@@ -31,6 +32,6 @@ public class Writer implements Runnable {
             counter.increment();
         }
 
-        stopWorkLatch.countDown();
+        stopWorkingLatch.countDown();
     }
 }
