@@ -5,6 +5,12 @@ language: java
 jdk:
   - oraclejdk8
 
+addons:
+  sonarcloud:
+    organization: "$SONAR_ORG"
+    token:
+      secure: "$SONAR_TOKEN"
+
 matrix:
   include:
   - os: linux
@@ -17,6 +23,7 @@ before_install:
 script:
   - travis_retry mvn clean
   - travis_retry mvn package jacoco:report coveralls:report
+  - travis_retry mvn sonar:sonar
 
 after_success:
   - java -jar target/locksbenchmark-1.0.jar -r 1 -w 1

@@ -10,6 +10,9 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <sonar.organization>chenpy228</sonar.organization>
+        <sonar.projectKey>locksbenchmark</sonar.projectKey>
     </properties>
 
     <dependencies>
@@ -84,6 +87,12 @@
                 <configuration>
                     <repoToken>0Z7oizR3lF75PPNkrbnzV7kWhfUUgrULB</repoToken>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.sonarsource.scanner.maven</groupId>
+                <artifactId>sonar-maven-plugin</artifactId>
+                <version>3.6.1.1688</version>
             </plugin>
         </plugins>
     </build>
