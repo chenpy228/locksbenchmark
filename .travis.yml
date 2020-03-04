@@ -5,12 +5,6 @@ language: java
 jdk:
   - oraclejdk8
 
-addons:
-  sonarcloud:
-    organization: "$SONAR_ORG"
-    token:
-      secure: "$SONAR_TOKEN"
-
 matrix:
   include:
   - os: linux
