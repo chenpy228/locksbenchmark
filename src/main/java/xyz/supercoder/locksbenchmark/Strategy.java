@@ -2,6 +2,8 @@ package xyz.supercoder.locksbenchmark;
 
 import org.apache.commons.cli.*;
 
+import java.util.Optional;
+
 public class Strategy {
     private static final long MIN_TARGET_VALUE = 10000L;
     private static final long MAX_TARGET_VALUE = 100000000000000L;
@@ -67,13 +69,13 @@ public class Strategy {
         this.rounds = DEFAULT_ROUNDS;
     }
 
-    public static Strategy parseStrategy(String[] args) {
+    public static Optional<Strategy> parseStrategy(String[] args) {
         Strategy strategy = new Strategy();
         try {
             CommandLine commandLine = new DefaultParser().parse(options, args);
             if (commandLine.hasOption("h")) {
                 printHelpString();
-                System.exit(0);
+                return Optional.empty();
             }
 
             if (commandLine.hasOption("r")) {
@@ -94,13 +96,13 @@ public class Strategy {
         } catch (ParseException | IllegalArgumentException e) {
             e.printStackTrace();
             printHelpString();
-            System.exit(1);
+            return Optional.empty();
         }
 
-        return strategy;
+        return Optional.of(strategy);
     }
 
-    private static void  printHelpString() {
+    private static void printHelpString() {
         HelpFormatter helpFormatter = new HelpFormatter();
         helpFormatter.printHelp("java -jar locksbenchmark-1.0.jar", options);
     }
