@@ -29,7 +29,7 @@ public class StrategyTest {
     }
 
     @Test
-    public void testDefaultStategy() {
+    public void testDefaultStrategy() {
         Optional<Strategy> optionalStrategy = Strategy.parseStrategy(null);
 
         Assert.assertTrue(optionalStrategy.isPresent());
@@ -47,5 +47,14 @@ public class StrategyTest {
         Optional<Strategy> optionalStrategy = Strategy.parseStrategy(args);
 
         Assert.assertFalse(optionalStrategy.isPresent());
+    }
+
+    @Test
+    public void testStrategyString() {
+        String[] args = {"-r", "5", "-w", "5", "-R", "20", "-t", "100000"};
+        Optional<Strategy> optionalStrategy = Strategy.parseStrategy(args);
+
+        Assert.assertEquals("Reader threads: 5, writer threads: 5, rounds: 20, target value: 100000",
+                optionalStrategy.get().toString());
     }
 }
