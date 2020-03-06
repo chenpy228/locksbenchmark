@@ -1,8 +1,15 @@
 package xyz.supercoder.locksbenchmark;
 
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.concurrent.locks.*;
+import java.util.stream.Collectors;
 
 public enum Counter {
 
@@ -149,9 +156,9 @@ public enum Counter {
     },
 
     RWLock() {
-        private final ReadWriteLock rwlock = new ReentrantReadWriteLock();
-        private final Lock rlock = rwlock.readLock();
-        private final Lock wlock = rwlock.writeLock();
+        private final transient ReadWriteLock rwlock = new ReentrantReadWriteLock();
+        private final transient Lock rlock = rwlock.readLock();
+        private final transient Lock wlock = rwlock.writeLock();
 
         private long value = 0;
 
@@ -182,7 +189,7 @@ public enum Counter {
     },
 
     Synchronized() {
-        private final Object lock = new Object();
+        private final transient Object lock = new Object();
 
         private long value = 0;
 
@@ -269,4 +276,58 @@ public enum Counter {
     public abstract void reset();  // maybe not thread safe
     public abstract long get();
     public abstract void increment();
+
+    public long benchmark(Strategy strategy) {
+        System.out.println("Testing synchronization mechanism: " + this.name());
+
+        int rounds = strategy.getRounds();
+        Long[] results = new Long[rounds];
+        for (int round = 0; round < rounds; round++) {
+            this.reset();
+
+            // The main purpose of this barrier is to wait for all threads to start working,
+            // and then record the start time.
+            final long[] startTime = new long[1];
+            CyclicBarrier startWorkingBarrier = new CyclicBarrier(strategy.getTotalThreads(),
+                    () -> startTime[0] = System.currentTimeMillis());
+
+            CountDownLatch stopWorkingLatch = new CountDownLatch(1);
+
+            ExecutorService executorService = Executors.newFixedThreadPool(strategy.getTotalThreads());
+            for (int i = 0; i < strategy.getReaderThreads(); i++) {
+                executorService.submit(new Reader(this, startWorkingBarrier, stopWorkingLatch,
+                        strategy.getTargetValue()));
+            }
+
+            for (int i = 0; i < strategy.getWriterThreads(); i++) {
+                executorService.submit(new Writer(this, startWorkingBarrier, stopWorkingLatch));
+            }
+
+            try {
+                // waiting for the fastest thread to finish working
+                stopWorkingLatch.await();
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+
+            results[round] = System.currentTimeMillis() - startTime[0];
+
+            // shutdown thread pool and spin to wait
+            executorService.shutdownNow();
+            while (!executorService.isShutdown()) {
+                Thread.yield();
+            }
+
+            // update progress
+            ProgressBar.show((round + 1) * 100 / rounds);
+        }
+
+        // remove the min and max value, and calculate the average
+        long avg = Arrays.stream(results).sorted().skip(1)  // remove min value
+                .sorted(Comparator.reverseOrder()).skip(1)  // remove max value
+                .collect(Collectors.averagingLong(Long::valueOf)).longValue();
+
+        System.out.println(String.format("average(ms): %d, details(ms): %s", avg, Arrays.toString(results)));
+        return avg;
+    }
 }

@@ -62,7 +62,7 @@ public class Strategy {
                 shortDesc, minValue, maxValue, defaultValue);
     }
 
-    private Strategy() {
+    public Strategy() {
         this.targetValue = DEFAULT_TARGET_VALUE;
         this.readerThreads = DEFAULT_READER_THREADS;
         this.writerThreads = DEFAULT_WRITER_THREADS;

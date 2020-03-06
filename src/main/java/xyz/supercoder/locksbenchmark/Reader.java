@@ -29,7 +29,9 @@ public class Reader implements Runnable {
     public void run() {
         try {
             startWorkingBarrier.await();
-        } catch (InterruptedException | BrokenBarrierException e) {
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        } catch (BrokenBarrierException e) {
             e.printStackTrace();
         }
 

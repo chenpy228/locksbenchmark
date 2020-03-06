@@ -4,6 +4,10 @@ public class ProgressBar {
 
     private static final int BAR_TOTAL_LENGTH = 10;
 
+    private ProgressBar() {
+        // util class, can not be instanced
+    }
+
     public static void show(int percentage) {
         if (percentage < 0 || percentage > 100) {
             return;
