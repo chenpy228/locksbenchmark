@@ -25,7 +25,7 @@ public class CounterTest {
     public void testBenchmark() {
         for (Counter counter : Counter.values()) {
             long result = counter.benchmark(new Strategy());
-            Assert.assertTrue(result >= 0);
+            Assert.assertTrue(result > 0);
             break; // just test if the mechanism can work
         }
     }

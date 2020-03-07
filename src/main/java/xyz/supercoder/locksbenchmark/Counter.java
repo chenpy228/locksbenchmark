@@ -281,7 +281,7 @@ public enum Counter {
         System.out.println("Testing synchronization mechanism: " + this.name());
 
         int rounds = strategy.getRounds();
-        Long[] results = new Long[rounds];
+        long[] results = new long[rounds];
         for (int round = 0; round < rounds; round++) {
             this.reset();
 
@@ -323,7 +323,8 @@ public enum Counter {
         }
 
         // remove the min and max value, and calculate the average
-        long avg = Arrays.stream(results).sorted().skip(1)  // remove min value
+        long avg = Arrays.stream(results).boxed()
+                .sorted().skip(1)                           // remove min value
                 .sorted(Comparator.reverseOrder()).skip(1)  // remove max value
                 .collect(Collectors.averagingLong(Long::valueOf)).longValue();
 
