@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2020 Pele Chen All Rights Reserved.
+ * @Author: Pele Chen https://supercoder.xyz
+ * @Create: 2020-03-14T20:11:29.012+08:00
+ */
+
 package xyz.supercoder.locksbenchmark;
 
 import java.util.Arrays;
